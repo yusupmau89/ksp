@@ -25,7 +25,11 @@
             @if (Route::has('login'))
                 <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                     @auth
-                        <a href="{{ url('/home') }}" class="text-sm text-gray-700 underline">Home</a>
+                    <form action="{{route('logout')}}" method="post" id='logout'>
+                        @csrf
+                        <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 underline">Dashboard</a>
+                        <a href="#" class="ml-4 text-sm text-gray-700 underline" onclick="document.getElementById('logout').submit(); return false;">Logout</a>
+                    </form>
                     @else
                         <a href="{{ route('login') }}" class="text-sm text-gray-700 underline">Login</a>
 
