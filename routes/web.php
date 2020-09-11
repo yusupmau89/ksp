@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +19,10 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia\Inertia::render('Dashboard');
+    //return Inertia\Inertia::render('Dashboard');
+    return view('layouts.blank');
 })->name('dashboard');
+
+Route::middleware('auth')->group(function(){
+    Route::resource('product', ProductController::class);
+});
