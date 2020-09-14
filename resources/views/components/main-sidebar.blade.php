@@ -28,14 +28,16 @@
                     with font-awesome or any other icon font library -->
                 <li class="nav-item has-treeview
                     {{
-                    Request()->is('product') || Request()->is('product/*')
+                    Request()->is('product') || Request()->is('product/*') ||
+                    Request()->is('customer') || Request()->is('customer/*')
                     ? 'menu-open'
                     : ''
                     }}
                 ">
                     <a href="#" class="nav-link
                         {{
-                        Request()->is('product') || Request()->is('product/*')
+                        Request()->is('product') || Request()->is('product/*') ||
+                        Request()->is('customer') || Request()->is('customer/*')
                         ? 'active'
                         : ''
                         }}
@@ -54,18 +56,26 @@
                         </a>
                         </li>
                         <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Dashboard v2</p>
+                        <a href="{{route('customer.index')}}" class="nav-link {{Request()->is('customer') || Request()->is('customer/*') ? 'active' : ''}}">
+                            <i class="fas fa-id-card nav-icon"></i>
+                            <p>Customer</p>
                         </a>
                         </li>
                         <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Dashboard v3</p>
+                            <i class="far fa-id-card nav-icon"></i>
+                            <p>Supplier</p>
                         </a>
                         </li>
                     </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-signature"></i>
+                        <p>
+                            Purchase Order
+                        </p>
+                    </a>
                 </li>
                 <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">

@@ -12,11 +12,11 @@
         <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-            <h1>Produk &amp; Layanan</h1>
+            <h1>Customer</h1>
             </div>
             <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item active">Produk</li>
+                <li class="breadcrumb-item active">Customer</li>
             </ol>
             </div>
         </div>
@@ -31,9 +31,9 @@
                     <div class="card card-info card-outline">
                         <div class="card-header">
                             <h3 class="card-title">
-                                Barang / Jasa
-                                <a href="{{route('product.create')}}" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Tambah Produk
+                                Data Customer
+                                <a href="{{route('customer.create')}}" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Tambah Customer
                                 </a>
                             </h3>
                         </div>
@@ -41,49 +41,49 @@
                             @if (session('success'))
                             <div class="alert alert-success">{{session('success')}}</div>
                             @endif
-                            <table class="table table-bordered table-striped" id="produk">
+                            <table class="table table-bordered table-striped" id="customer">
                                 <thead>
                                     <tr>
-                                        <th>Kode Produk</th>
-                                        <th>Nama Produk</th>
-                                        <th>Harga</th>
+                                        <th>Nama Customer</th>
+                                        <th>Email</th>
+                                        <th>No Telepon</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($products as $product)
+                                    @forelse ($customers as $customer)
                                     <tr>
                                         <td>
-                                            <a href="{{route('product.show', $product)}}">
-                                                {{$product->kode_produk}}
+                                            <a href="{{route('customer.show', $customer)}}">
+                                                {{$customer->nama_customer}}
                                             </a>
                                         </td>
-                                        <td>{{$product->nama_produk}}</td>
-                                        <td>Rp. {{number_format($product->harga,2,',','.')}}</td>
+                                        <td>{{empty($customer->email) ? '' : $customer->email}}</td>
+                                        <td>{{empty($customer->no_telepon) ? '' : $customer->noTelp()}}</td>
                                         <td>
-                                            <a href="{{route('product.edit', $product)}}" class="btn btn-sm btn-warning">
+                                            <a href="{{route('customer.edit', $customer)}}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-pencil-alt"></i> Ubah
                                             </a>
-                                            <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" href="#hapus-{{$product->slug}}">
+                                            <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" href="#hapus-{{$customer->slug}}">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                 Hapus
                                             </a>
                                         </td>
-                                        <div class="modal fade" id="hapus-{{$product->slug}}">
+                                        <div class="modal fade" id="hapus-{{$customer->slug}}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h4 class="modal-title">{{$product->nama_produk}}</h4>
+                                                    <h4 class="modal-title">{{$customer->nama_customer}}</h4>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Apakah {{$product->nama_produk}} akan dihapus?</p>
+                                                    <p>Apakah {{$customer->nama_customer}} akan dihapus?</p>
                                                 </div>
                                                 <div class="modal-footer justify-content-between">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                                    <form action="{{route('product.destroy', $product)}}" method="post">
+                                                    <form action="{{route('customer.destroy', $customer)}}" method="post">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Hapus</button>
                                                     </form>
@@ -97,7 +97,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="4">Produk masih kosong, silakan tambah terlebih dahulu</td>
+                                        <td colspan="4">Data Customer masih kosong, silakan tambah terlebih dahulu</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -120,7 +120,7 @@
 <script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 <script>
     $(function(){
-        $('#produk').DataTable({
+        $('#customer').DataTable({
             "responsive" : false,
             "autoWidth" : false,
             "scrollX" : true,
