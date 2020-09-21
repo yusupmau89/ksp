@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseOrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,4 +28,5 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::middleware('auth')->group(function(){
     Route::resource('product', ProductController::class);
     Route::resource('customer', CustomerController::class);
+    Route::resource('purchase', PurchaseOrderController::class);
 });
