@@ -33,6 +33,7 @@ class StoreListPo extends FormRequest
             'tanggal_kirim' => 'required|date_format:d/m/Y|after:tanggal_po',
             'top' => 'required',
             'down_payment' => 'required|numeric|min:0',
+            'ppn' => 'required|in:Ya,Tidak',
             'product' => 'required',
             'product.*.produk' => 'required',
             'product.*.jumlah' => 'required|numeric|min:0|not_in:0',

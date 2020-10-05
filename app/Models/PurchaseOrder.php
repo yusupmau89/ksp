@@ -13,8 +13,11 @@ class PurchaseOrder extends Model
         'no_po',
         'tanggal_po',
         'tanggal_kirim',
-        'customer',
+        'customer_id',
         'down_payment',
+        'top',
+        'ppn',
+        'status',
         'created_by',
         'slug',
     ];
@@ -31,12 +34,7 @@ class PurchaseOrder extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer', 'id');
-    }
-
-    public function statusPo()
-    {
-        return $this->hasOne(StatusPo::class, 'purchase_order', 'id');
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 
     public function lists()
@@ -44,9 +42,9 @@ class PurchaseOrder extends Model
         return $this->hasMany(PurchaseList::class, 'no_po', 'id');
     }
 
-    public function pengiriman()
+    public function suratJalan()
     {
-        return $this->hasMany(Pengiriman::class, 'no_po', 'id');
+        return $this->hasMany(SuratJalan::class, 'no_po', 'id');
     }
 
     public function total()

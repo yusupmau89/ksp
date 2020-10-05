@@ -18,7 +18,7 @@ class CreatePurchaseOrdersTable extends Migration
             $table->string('no_po')->unique();
             $table->date('tanggal_po');
             $table->date('tanggal_kirim');
-            $table->unsignedBigInteger('customer');
+            $table->unsignedBigInteger('customer_id');
             $table->unsignedDecimal('down_payment', 17,2);
             $table->unsignedBigInteger('created_by');
             $table->string('slug');

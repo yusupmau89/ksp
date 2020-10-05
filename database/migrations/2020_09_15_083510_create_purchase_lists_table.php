@@ -19,6 +19,8 @@ class CreatePurchaseListsTable extends Migration
             $table->unsignedBigInteger('produk');
             $table->unsignedDouble('jumlah');
             $table->unsignedDecimal('harga', 17, 2);
+            $table->unsignedDouble('terkirim');
+            $table->unsignedDouble('sisa');
             $table->timestamps();
         });
     }

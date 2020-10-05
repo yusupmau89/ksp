@@ -14,7 +14,9 @@ class AddFieldTopTablePurchaseOrders extends Migration
     public function up()
     {
         Schema::table('purchase_orders', function (Blueprint $table) {
-            $table->string('top');
+            $table->string('top')->after('down_payment');
+            $table->enum('ppn',['Ya', 'Tidak'])->after('top');
+            $table->enum('status',['On Progress', 'Partially Delivered', 'Partially Invoiced', 'Completed'])->after('ppn');
         });
     }
 

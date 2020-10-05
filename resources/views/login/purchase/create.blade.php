@@ -70,7 +70,7 @@
                                 <div class="form-group">
                                     <label>Tanggal Pengiriman</label>
                                     <div class="input-group date" id="reservationdate2" data-target-input="nearest">
-                                        <input name="tanggal_kirim" value="{{old('tanggal_po', date('d/m/y'))}}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate2"/>
+                                        <input name="tanggal_kirim" value="{{old('tanggal_kirim', date('d/m/y'))}}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate2"/>
                                         <div class="input-group-append" data-target="#reservationdate2" data-toggle="datetimepicker">
                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                         </div>
@@ -92,6 +92,23 @@
                                     @error('down_payment')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
+                                </div>
+                                <div class="form-inline mb-3">
+                                    <div class="form-group">
+                                        <label class="mr-2">PPN 10%</label>
+                                        <div class="form-check mr-2">
+                                            <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="ppn" value="Ya" {{old('ppn')==='Ya' || empty(old('ppn')) ? 'checked' : ''}}>
+                                            Ya
+                                          </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="ppn" value="Tidak" {{old('ppn')==='Tidak' ? 'checked' : ''}}>
+                                            Tidak
+                                          </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-inline">
                                     <div class="form-group">

@@ -11,12 +11,12 @@
     <section class="content-header">
         <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
-            <h1>Purchase Order</h1>
+            <div class="col-sm-8">
+            <h1>Surat Jalan {{$purchase->no_po.' | '.$purchase->customer->nama_customer}}</h1>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
             <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item active">Purchase Order</li>
+                <li class="breadcrumb-item active">Surat Jalan</li>
             </ol>
             </div>
         </div>
@@ -31,9 +31,9 @@
                     <div class="card card-info card-outline">
                         <div class="card-header">
                             <h3 class="card-title">
-                                Data Purchase Order
-                                <a href="{{route('purchase.create')}}" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Tambah PO
+                                Data Surat Jalan
+                                <a href="{{route('sj.create', $purchase)}}" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Buat Surat Jalan
                                 </a>
                             </h3>
                         </div>
@@ -44,49 +44,46 @@
                             <table class="table table-bordered table-striped" id="purchase">
                                 <thead>
                                     <tr>
-                                        <th>Nomor PO</th>
+                                        <th>Nomor Surat Jalan</th>
                                         <th>Tanggal Kirim</th>
-                                        <th>Status</th>
+                                        <th>TTD</th>
                                         <th>Aksi</th>
-                                        <th style="display: none;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($purchases as $purchase)
+                                    @forelse ($suratJalan as $sj)
                                     <tr>
                                         <td>
-                                            <a href="{{route('purchase.show', $purchase)}}">
-                                                {{$purchase->no_po}}
+                                            <a href="{{route('sj.show', [$purchase, $sj])}}">
+                                                {{$sj->no_surat_jalan}}
                                             </a>
                                         </td>
-                                        <td>{{$purchase->tanggal_kirim}}</td>
-                                        <td>{{$purchase->status}}</td>
+                                        <td>{{$sj->tanggal_surat_jalan}}</td>
+                                        <td>{{$sj->signed_by}}</td>
                                         <td>
-                                            <a href="{{route('sj.index', $purchase)}}" data-toggle="tooltip" title="Surat Jalan" class="btn btn-success btn-sm"><i class="fas fa-truck-pickup"></i></a>
-                                            <a href="#" data-toggle="tooltip" title="Invoice" class="btn btn-sm btn-primary"><i class="fas fa-file-invoice"></i></a>
-                                            <a href="{{route('purchase.edit', $purchase)}}" data-toggle="tooltip" title="Ubah" class="btn btn-sm btn-warning">
-                                                <i class="far fa-edit"></i>
+                                            <a href="{{route('sj.edit', [$purchase, $sj])}}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-pencil-alt"></i> Ubah
                                             </a>
-                                            <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" href="#hapus-{{$purchase->slug}}">
-                                                <i data-toggle="tooltip" title="hapus" class="fa fa-trash" aria-hidden="true"></i>
+                                            <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" href="#hapus-{{$sj->slug}}">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                Hapus
                                             </a>
                                         </td>
-                                        <td style="display: none;">{{$purchase->customer->nama_customer}}</td>
-                                        <div class="modal fade" id="hapus-{{$purchase->slug}}">
+                                        <div class="modal fade" id="hapus-{{$sj->slug}}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h4 class="modal-title">{{$purchase->no_po}}</h4>
+                                                    <h4 class="modal-title">Apakah {{$sj->no_surat_jalan}}akan dihapus?</h4>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Apakah {{$purchase->no_po}} akan dihapus?</p>
+                                                    <p>Apakah akan dihapus?</p>
                                                 </div>
                                                 <div class="modal-footer justify-content-between">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-                                                    <form action="{{route('purchase.destroy', $purchase)}}" method="post">
+                                                    <form action="{{route('sj.destroy', [$purchase, $sj])}}" method="post">
                                                     @csrf @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Hapus</button>
                                                     </form>
@@ -100,7 +97,7 @@
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="4">Purchase Order masih kosong, silakan tambah terlebih dahulu</td>
+                                        <td colspan="4">Surat Jalan masih kosong, silakan tambah terlebih dahulu</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -123,11 +120,13 @@
 <script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 <script>
     $(function(){
+        /*
         $('#purchase').DataTable({
             "responsive" : false,
             "autoWidth" : false,
             "scrollX" : true,
         });
+        */
     });
 </script>
 @endsection

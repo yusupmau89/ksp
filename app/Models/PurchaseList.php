@@ -14,11 +14,23 @@ class PurchaseList extends Model
         'produk',
         'jumlah',
         'harga',
+        'terkirim',
+        'sisa',
     ];
 
     public function purchase()
     {
         return $this->belongsTo(PurchaseOrder::class, 'no_po', 'id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'produk', 'id');
+    }
+
+    public function sjList()
+    {
+        return $this->hasOne(SjList::class, 'purchase_list', 'id');
     }
 
     public function subtotal()

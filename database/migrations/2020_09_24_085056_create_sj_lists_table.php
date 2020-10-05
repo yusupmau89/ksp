@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStatusPosTable extends Migration
+class CreateSjListsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateStatusPosTable extends Migration
      */
     public function up()
     {
-        Schema::create('status_pos', function (Blueprint $table) {
+        Schema::create('sj_lists', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('purchase_order');
-            $table->string('status');
+            $table->unsignedBigInteger('surat_jalan');
+            $table->unsignedBigInteger('purchase_list');
+            $table->unsignedBigInteger('produk');
+            $table->unsignedDouble('jumlah');
+            $table->unsignedDouble('retur')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreateStatusPosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('status_pos');
+        Schema::dropIfExists('sj_lists');
     }
 }

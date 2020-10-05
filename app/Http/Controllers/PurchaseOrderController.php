@@ -48,12 +48,14 @@ class PurchaseOrderController extends Controller
         $po = new PurchaseOrder;
 
         $po->no_po = $validated['no_po'];
-        $po->customer = $validated['customer'];
+        $po->customer_id = $validated['customer'];
         $po->tanggal_po = Carbon::createFromFormat('d/m/Y',$validated['tanggal_po'])->format('Y/m/d');
-        $po->tanggal_kirim = Carbon::createFromFormat('d/m/Y',$validated['tanggal_po'])->format('Y/m/d');
+        $po->tanggal_kirim = Carbon::createFromFormat('d/m/Y',$validated['tanggal_kirim'])->format('Y/m/d');
         $po->top = $validated['top'];
         $po->down_payment = $validated['down_payment'];
         $po->created_by = Auth::user()->id;
+        $po->ppn = $validated['ppn'];
+        $po->status = 'On Progress';
         $po->slug = Str::slug($validated['no_po']);
 
         $po->save();
@@ -63,18 +65,10 @@ class PurchaseOrderController extends Controller
                 'produk' => $product['produk'],
                 'jumlah' => $product['jumlah'],
                 'harga' => $product['harga'],
-            ]);
-
-            $po->pengiriman()->create([
-                'produk' => $product['produk'],
                 'terkirim' => 0,
                 'sisa' => $product['jumlah'],
             ]);
         }
-
-        $po->statusPo()->create([
-            'status' => strtoupper('on progress'),
-        ]);
 
         return redirect('purchase')->with('success', 'PO berhasil ditambah');
     }
