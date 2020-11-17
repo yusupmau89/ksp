@@ -27,17 +27,17 @@ class StoreListPo extends FormRequest
     public function rules()
     {
         return [
-            'no_po' => 'required|unique:purchase_orders,no_po',
+            'no_po' => 'required|unique:purchase_orders,nomor_po',
             'customer' => 'required',
             'tanggal_po' => 'required|date_format:d/m/Y',
             'tanggal_kirim' => 'required|date_format:d/m/Y|after:tanggal_po',
             'top' => 'required',
-            'down_payment' => 'required|numeric|min:0',
             'ppn' => 'required|in:Ya,Tidak',
             'product' => 'required',
             'product.*.produk' => 'required',
             'product.*.jumlah' => 'required|numeric|min:0|not_in:0',
             'product.*.harga' => 'required|numeric|min:0|not_in:0',
+            'product.*.diskon' => 'numeric|min:0',
         ];
     }
 

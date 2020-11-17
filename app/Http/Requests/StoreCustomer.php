@@ -26,11 +26,11 @@ class StoreCustomer extends FormRequest
     {
         return [
             'nama_customer' => 'required',
-            'npwp' => 'sometimes|unique:customers,npwp',
+            'npwp' => 'sometimes|unique:pengguna,npwp',
             'alamat_pengiriman' => 'required',
             'alamat_penagihan' => 'sometimes',
-            'email' => 'nullable|email|unique:customers,email',
-            'no_telepon' => 'sometimes|unique:customers,no_telepon',
+            'email' => 'nullable|email|unique:emails,email',
+            'no_telepon' => 'sometimes|unique:telepon,no_telepon',
         ];
     }
 
@@ -49,9 +49,9 @@ class StoreCustomer extends FormRequest
     {
         $this->merge([
             'nama_customer' => strtoupper($this->nama_customer),
-            'alamat_pengiriman' => strtoupper($this->alamat_pengiriman),
-            'alamat_penagihan' => strtoupper($this->alamat_penagihan),
             'npwp' => implode('',$this->npwp),
+            'alamat_pengiriman' => ucwords(strtolower($this->alamat_pengiriman)),
+            'alamat_penagihan' => ucwords(strtolower($this->alamat_penagihan)),
         ]);
     }
 }

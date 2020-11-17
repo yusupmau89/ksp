@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCustomer;
 use App\Http\Requests\UpdateCustomer;
-use App\Models\Customer;
+use App\Models\Pengguna;
+use App\Models\RefAlamat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
+    //added
+    private $urlProvinsi = 'https://dev.farizdotid.com/api/daerahindonesia/provinsi';
+    //end added
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +23,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = Customer::orderBy('nama_customer', 'asc')->get();
+        $customers = Pengguna::orderBy('nama', 'asc')->get();
         return view('login.customer.index', compact('customers'));
     }
 
@@ -42,23 +47,41 @@ class CustomerController extends Controller
     {
         $validated = $request->validated();
         $npwp = preg_replace('/[^0-9]/', '', $validated['npwp']);
+        $validated['customer'] = true;
 
-        $customer = new Customer;
-        $customer->nama_customer = $validated['nama_customer'];
+        $customer = new Pengguna;
+        $customer->nama = $validated['nama_customer'];
+        $customer->customer = $validated['customer'];
         if (!empty($npwp))
             $customer->npwp = $validated['npwp'];
-        $customer->alamat_pengiriman = $validated['alamat_pengiriman'];
-        if (empty($validated['alamat_penagihan']))
-            $customer->alamat_penagihan = $validated['alamat_pengiriman'];
-        else $customer->alamat_penagihan = $validated['alamat_penagihan'];
-        if (!empty($validated['email']))
-            $customer->email = $validated['email'];
-        if (!empty($validated['no_telepon']))
-            $customer->no_telepon = $validated['no_telepon'];
         $customer->created_by = Auth::user()->id;
-        $customer->slug = Str::slug($validated['nama_customer']);
-
+        $customer->slug = Str::slug($validated['nama_customer'].date('-His'));
         $customer->save();
+
+        $customer->alamats()->create([
+            'ref_alamat_id' => 1,
+            'nama_jalan' => $validated['alamat_pengiriman'],
+        ]);
+
+        if (empty($validated['alamat_penagihan']))
+        {
+            $customer->alamats()->create([
+                'ref_alamat_id' => 2,
+                'nama_jalan' => $validated['alamat_pengiriman'],
+            ]);
+        }
+        else
+        {
+            $customer->alamats()->create([
+                'ref_alamat_id' => 2,
+                'nama_jalan' => $validated['alamat_penagihan'],
+            ]);
+        }
+        if (!empty($validated['email']))
+            $customer->emails()->create(['email' => $validated['email']]);
+        if (!empty($validated['no_telepon']))
+            $customer->telepons()->create(['no_telepon' => $validated['no_telepon']]);
+
         return redirect('/customer')->with('success', 'Customer berhasil ditambah');
     }
 
@@ -68,7 +91,7 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function show(Customer $customer)
+    public function show(Pengguna $customer)
     {
         return view('login.customer.show', ['customer' => $customer]);
     }
@@ -79,7 +102,7 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Customer $customer)
+    public function edit(Pengguna $customer)
     {
         return view('login.customer.edit', compact('customer'));
     }
@@ -91,26 +114,30 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCustomer $request, Customer $customer)
+    public function update(UpdateCustomer $request, Pengguna $customer)
     {
         $validated = $request->validated();
         $npwp = preg_replace('/[^0-9]/', '', $validated['npwp']);
 
-        $customer->nama_customer = $validated['nama_customer'];
+        $customer->nama = $validated['nama_customer'];
         if (!empty($npwp))
             $customer->npwp = $validated['npwp'];
         else $customer->npwp = null;
-        $customer->alamat_pengiriman = $validated['alamat_pengiriman'];
+        $customer->alamats()->where('ref_alamat_id', 1)->first()->nama_jalan = $validated['alamat_pengiriman'];
         if (empty($validated['alamat_penagihan']))
-            $customer->alamat_penagihan = $validated['alamat_pengiriman'];
-        else $customer->alamat_penagihan = $validated['alamat_penagihan'];
-        if (!empty($validated['email']))
-            $customer->email = $validated['email'];
-        else $customer->email = null;
-        if (!empty($validated['no_telepon']))
-            $customer->no_telepon = $validated['no_telepon'];
-        else $customer->no_telepon = null;
-        $customer->slug = Str::slug($validated['nama_customer']);
+            $customer->alamats()->where('ref_alamat_id', 2)->first()->nama_jalan = $validated['alamat_pengiriman'];
+        else $customer->alamats()->where('ref_alamat_id', 2)->first()->nama_jalan = $validated['alamat_penagihan'];
+        if(!empty($validated['email']) && $customer->emails()->count()==0)
+            $customer->emails()->create(['email'=>$validated['email']]);
+        elseif (!empty($validated['email']))
+            $customer->emails()->first()->update(['email'=>$validated['email']]);
+        else $customer->emails()->delete();
+        if (!empty($validated['no_telepon']) && $customer->telepons()->count()==0)
+            $customer->telepons()->create(['no_telepon'=>$validated['no_telepon']]);
+        elseif (!empty($validated['no_telepon']))
+            $customer->telepons()->first()->update(['no_telepon'=>$validated['no_telepon']]);
+        else $customer->telepons()->delete();
+        $customer->slug = Str::slug($validated['nama_customer'].date('-His'));
 
         $customer->save();
         return redirect('/customer')->with('success', 'Customer berhasil diubah');
@@ -122,8 +149,11 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(Pengguna $customer)
     {
+        $customer->alamats()->delete();
+        $customer->telepons()->delete();
+        $customer->emails()->delete();
         $customer->delete();
         return redirect('/customer')->with('success', 'Customer berhasil dihapus');
     }

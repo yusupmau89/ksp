@@ -10,13 +10,14 @@ class PurchaseOrder extends Model
     use HasFactory;
 
     protected $fillable = [
-        'no_po',
+        'nomor_po',
         'tanggal_po',
         'tanggal_kirim',
         'customer_id',
-        'down_payment',
         'top',
         'ppn',
+        'diskon',
+        'grand_total',
         'status',
         'created_by',
         'slug',
@@ -34,7 +35,7 @@ class PurchaseOrder extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+        return $this->belongsTo(Pengguna::class, 'customer_id', 'id');
     }
 
     public function lists()
@@ -45,6 +46,11 @@ class PurchaseOrder extends Model
     public function suratJalan()
     {
         return $this->hasMany(SuratJalan::class, 'no_po', 'id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'nomor_po', 'id');
     }
 
     public function total()

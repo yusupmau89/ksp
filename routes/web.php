@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SuratJalanController;
@@ -27,8 +29,15 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware('auth')->group(function(){
+    Route::get('kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::post('kategori', [KategoriController::class, 'store'])->name('kategori.store');
+    Route::patch('kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
     Route::resource('product', ProductController::class);
     Route::resource('customer', CustomerController::class);
     Route::resource('purchase', PurchaseOrderController::class);
     Route::resource('purchase/{purchase}/sj', SuratJalanController::class);
+    Route::resource('purchase/{purchase}/invoice', InvoiceController::class)->except([
+        'edit', 'update',
+    ]);
 });

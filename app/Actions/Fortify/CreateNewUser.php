@@ -2,16 +2,19 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Laravel\Fortify\Rules\Password;
 
 class CreateNewUser implements CreatesNewUsers
 {
+    use PasswordValidationRules;
+
     /**
-     * Validate and create a newly registered user.
+     * Create a newly registered user.
      *
      * @param  array  $input
      * @return \App\Models\User
@@ -20,16 +23,45 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', new Password, 'confirmed'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => $this->passwordRules(),
+        ], [
+            'required' => ':attribute tidak harus diisi',
+            'max' => ':attribute tidak boleh lebih dari 255 karakter',
+            'unique' => ':attribute sudah digunakan oleh user lain',
+            'email' => 'format :attribute harus valid',
         ])->validate();
 
-        return User::create([
-            'name' => $input['name'],
-            'username' => $input['username'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-        ]);
+        return DB::transaction(function () use ($input) {
+            return tap(User::create([
+                'name' => $input['name'],
+                'username' => $input['username'],
+                'email' => $input['email'],
+                'password' => Hash::make($input['password']),
+            ])
+            //,
+                /*
+                function (User $user) {
+                $this->createTeam($user);
+                }
+                */
+            );
+        });
+    }
+
+    /**
+     * Create a personal team for the user.
+     *
+     * @param  \App\Models\User  $user
+     * @return void
+     */
+    protected function createTeam(User $user)
+    {
+        $user->ownedTeams()->save(Team::forceCreate([
+            'user_id' => $user->id,
+            'name' => explode(' ', $user->name, 2)[0]."'s Team",
+            'personal_team' => true,
+        ]));
     }
 }

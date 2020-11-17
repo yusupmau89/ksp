@@ -46,19 +46,27 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <label>Kategori</label>
+                                    <label>Jenis Produk</label>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="kategori" value="Barang" @if(strtolower($product->kategori)==='barang') checked @endif>
+                                            <input type="radio" class="form-check-input" name="jenis_produk" value="Barang" @if(strtolower($product->jenis_produk)==='barang') checked @endif>
                                             Barang
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="kategori" value="Jasa" @if(strtolower($product->kategori)==='jasa') checked @endif>
+                                            <input type="radio" class="form-check-input" name="jenis_produk" value="Jasa" @if(strtolower($product->jenis_produk)==='jasa') checked @endif>
                                             Jasa
                                         </label>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kategori">Kategori</label>
+                                    <select class="form-control" name="kategori">
+                                    @foreach ($kategori as $item)
+                                        <option value="{{$item->id}}" {{old('kategori', $product->kategori)==$item->id?'selected':''}}>{{$item->kategori}}</option>
+                                    @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="satuan_unit">Satuan Unit</label>

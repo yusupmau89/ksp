@@ -55,11 +55,11 @@
                                     <tr>
                                         <td>
                                             <a href="{{route('customer.show', $customer)}}">
-                                                {{$customer->nama_customer}}
+                                                {{$customer->nama}}
                                             </a>
                                         </td>
-                                        <td>{{empty($customer->email) ? '' : $customer->email}}</td>
-                                        <td>{{empty($customer->no_telepon) ? '' : $customer->noTelp()}}</td>
+                                        <td>{{$customer->emails()->count()==0 ? '' : $customer->emails()->first()->email}}</td>
+                                        <td>{{$customer->telepons()->count()==0 ? '' : $customer->telepons()->first()->noTelp()}}</td>
                                         <td>
                                             <a href="{{route('customer.edit', $customer)}}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-pencil-alt"></i> Ubah
@@ -73,13 +73,13 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h4 class="modal-title">{{$customer->nama_customer}}</h4>
+                                                    <h4 class="modal-title">{{$customer->nama}}</h4>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Apakah {{$customer->nama_customer}} akan dihapus?</p>
+                                                    <p>Apakah {{$customer->nama}} akan dihapus?</p>
                                                 </div>
                                                 <div class="modal-footer justify-content-between">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>

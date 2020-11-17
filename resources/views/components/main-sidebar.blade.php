@@ -29,7 +29,8 @@
                 <li class="nav-item has-treeview
                     {{
                     Request()->is('product') || Request()->is('product/*') ||
-                    Request()->is('customer') || Request()->is('customer/*')
+                    Request()->is('customer') || Request()->is('customer/*') ||
+                    Request()->is('kategori') || Request()->is('kategori/*')
                     ? 'menu-open'
                     : ''
                     }}
@@ -55,6 +56,12 @@
                             <p>Product</p>
                         </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('kategori.index')}}" class="nav-link {{Request()->is('kategori') || Request()->is('kategori/*') ? 'active' : ''}}">
+                                <i class="fa fa-barcode nav-icon"></i>
+                                <p>Kategori</p>
+                            </a>
+                            </li>
                         <li class="nav-item">
                         <a href="{{route('customer.index')}}" class="nav-link {{Request()->is('customer') || Request()->is('customer/*') ? 'active' : ''}}">
                             <i class="fas fa-id-card nav-icon"></i>

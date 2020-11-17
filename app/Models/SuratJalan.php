@@ -12,7 +12,11 @@ class SuratJalan extends Model
     protected $fillable = [
         'no_surat_jalan',
         'tanggal_surat_jalan',
-        'no_po',
+        'nomor_po',
+        'nomor_invoice',
+        'kendaraan',
+        'plat_no',
+        'pengirim',
         'signed_by',
         'created_by',
         'slug'
@@ -25,11 +29,16 @@ class SuratJalan extends Model
 
     public function purchase()
     {
-        return $this->belongsTo(PurchaseOrder::class, 'no_po', 'id');
+        return $this->belongsTo(PurchaseOrder::class, 'nomor_po', 'id');
     }
 
     public function lists()
     {
-        return $this->hasMany(SjList::class, 'surat_jalan', 'id');
+        return $this->hasMany(SjList::class, 'no_surat_jalan', 'id');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class, 'no_surat_jalan', 'id');
     }
 }

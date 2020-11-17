@@ -14,6 +14,8 @@ class PurchaseList extends Model
         'produk',
         'jumlah',
         'harga',
+        'subtotal',
+        'diskon',
         'terkirim',
         'sisa',
     ];
@@ -31,10 +33,5 @@ class PurchaseList extends Model
     public function sjList()
     {
         return $this->hasOne(SjList::class, 'purchase_list', 'id');
-    }
-
-    public function subtotal()
-    {
-        return $this->jumlah*$this->harga;
     }
 }

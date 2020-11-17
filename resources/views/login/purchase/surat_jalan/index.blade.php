@@ -12,7 +12,7 @@
         <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-8">
-            <h1>Surat Jalan {{$purchase->no_po.' | '.$purchase->customer->nama_customer}}</h1>
+            <h1>Surat Jalan {{$purchase->no_po.' | '.$purchase->customer->nama}}</h1>
             </div>
             <div class="col-sm-4">
             <ol class="breadcrumb float-sm-right">
@@ -54,15 +54,16 @@
                                     @forelse ($suratJalan as $sj)
                                     <tr>
                                         <td>
-                                            <a href="{{route('sj.show', [$purchase, $sj])}}">
-                                                {{$sj->no_surat_jalan}}
-                                            </a>
+                                            {{$sj->no_surat_jalan}}
                                         </td>
-                                        <td>{{$sj->tanggal_surat_jalan}}</td>
+                                        <td>{{date('d F Y',strtotime($sj->tanggal_surat_jalan))}}</td>
                                         <td>{{$sj->signed_by}}</td>
                                         <td>
                                             <a href="{{route('sj.edit', [$purchase, $sj])}}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-pencil-alt"></i> Ubah
+                                            </a>
+                                            <a href="{{route('sj.show', [$purchase, $sj])}}" class="btn btn-sm btn-success">
+                                                <i class="fa fa-print" aria-hidden="true"></i> Print
                                             </a>
                                             <a type="button" class="btn btn-sm btn-danger" data-toggle="modal" href="#hapus-{{$sj->slug}}">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>

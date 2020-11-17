@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\PurchaseOrder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,9 +29,11 @@ class StoreSuratJalan extends FormRequest
             'no_po' => 'required',
             'no_surat_jalan' => 'required|unique:surat_jalans,no_surat_jalan',
             'tanggal_surat_jalan' => 'required|date_format:d/m/Y|after_or_equal:'.$this->purchase->tanggal_po,
-            'signed_by' => 'required',
+            'kendaraan' => 'nullable',
+            'plat_no' => 'nullable|alpha_num',
+            'pengirim' => 'nullable|regex:/^[a-zA-Z."\'\s]+$/',
+            'signed_by' => 'required|regex:/^[a-zA-Z."\'\s]+$/',
             'list' => 'required',
-            'list.*.produk' => 'required',
             'list.*.list' => 'required',
             'list.*.jumlah' => 'required|numeric|min:0',
         ];
@@ -39,27 +42,41 @@ class StoreSuratJalan extends FormRequest
     public function messages()
     {
         return [
-            'no_po.required' => 'Nomor PO tidak boleh kosong',
-            'no_surat_jalan.required' => 'Nomor Surat Jalan tidak boleh kosong',
-            'no_surat_jalan.unique' => 'Nomor Surat Jalan sudah dipakai',
-            'tanggal_surat_jalan.required' => 'Tanggal Surat Jalan tidak boleh kosong',
-            'tanggal_surat_jalan.date' => 'Tanggal Surat Jalan harus bertipe tanggal',
-            'tanggal_surat_jalan.after_or_equal' => 'Tanggal Surat Jalan tidak boleh kurang dari tanggal PO',
-            'list.required' => 'Produk yang dikirim tidak boleh kosong',
-            'list.*.produk.required' => 'Nama Produk tidak boleh kosong',
-            'list.*.list.required' => 'Nama List tidak boleh kosong',
-            'list.*.jumlah.required' => 'Jumlah produk yang dikirim tidak boleh kosong',
-            'list.*.jumlah.numeric' => 'Jumlah produk yang dikirim harus bertipe angka',
-            'list.*.jumlah.min' => 'Jumlah produk yang dikirim minimal 0',
-            'signed_by.required' => 'Penanda tangan tidak boleh kosong',
+            'required' => ':attribute tidak boleh kosong',
+            'unique' => ':attribute sudah dipakai',
+            'regex' => ':attribute diisi dengan nama',
+            'date_format' => 'Format Tanggal :attribute harus dd/mm/yyyy',
+            'after_or_equal' => ':attribute minimal sama dengan tanggal PO',
+            'alpha_num' => ':attribute diisi dengan angka dan huruf serta tidak boleh ada spasi',
+            'numeric' => ':attribute diisi dengan angka',
+            'min' => ':attribute minimal diisi :value',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'no_po' => 'Nomor PO',
+            'no_surat_jalan' => 'Nomor Surat Jalan',
+            'tanggal_surat_jalan' => 'Tanggal Surat Jalan',
+            'kendaraan' => 'Kendaraan',
+            'plat_no' => 'Plat Nomor',
+            'pengirim' => 'Pengendara',
+            'signed_by' => 'Penanda Tangan',
+            'list' => 'Produk',
+            'list.*.list' => 'Nama List',
+            'list.*.jumlah' => 'Jumlah Produk',
         ];
     }
 
     protected function prepareForValidation()
     {
         $this->merge([
-            'no_po' => strtoupper($this->no_po),
+            'no_po' => $this->purchase->id,
             'no_surat_jalan' => strtoupper($this->no_surat_jalan),
+            'kendaraan' => empty($this->kendaraan)?null:ucwords(strtolower($this->kendaraan)),
+            'plat_no' => empty($this->kendaraan)?null:strtoupper($this->plat_no),
+            'pengirim' => empty($this->kendaraan)?null:ucwords(strtolower($this->pengirim)),
         ]);
     }
 }

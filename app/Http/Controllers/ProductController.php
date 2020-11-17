@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProduct;
 use App\Http\Requests\UpdateProduct;
+use App\Models\Kategori;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -30,7 +30,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('login.produk.create');
+        $kategori = Kategori::all();
+        return view('login.produk.create', compact('kategori'));
     }
 
     /**
@@ -46,6 +47,7 @@ class ProductController extends Controller
         $product = new Product;
         $product->kode_produk = $validated['kode_produk'];
         $product->nama_produk = $validated['nama_produk'];
+        $product->jenis_produk = $validated['jenis_produk'];
         $product->kategori = $validated['kategori'];
         $product->satuan_unit = $validated['satuan_unit'];
         $product->harga = $validated['harga'];
@@ -81,7 +83,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('login.produk.edit', ['product'=>$product]);
+        $kategori = Kategori::all();
+        return view('login.produk.edit', compact('product', 'kategori'));
     }
 
     /**
@@ -97,6 +100,7 @@ class ProductController extends Controller
 
         $product->kode_produk = $validated['kode_produk'];
         $product->nama_produk = $validated['nama_produk'];
+        $product->jenis_produk = $validated['jenis_produk'];
         $product->kategori = $validated['kategori'];
         $product->satuan_unit = $validated['satuan_unit'];
         $product->harga = $validated['harga'];

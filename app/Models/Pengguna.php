@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Customer extends Model
+class Pengguna extends Model
 {
     use HasFactory;
 
+    protected $table = 'pengguna';
     protected $fillable = [
-        'nama_customer',
+        'nama',
         'npwp',
-        'alamat_pengiriman',
-        'alamat_penagihan',
-        'email',
-        'no_telepon',
+        'perusahaan',
+        'supplier',
+        'pegawai',
+        'customer',
         'created_by',
         'slug',
     ];
@@ -31,18 +32,19 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
-    public function noTelp()
+    public function alamats()
     {
-        //if(preg_match( '/^\+\d(\d{3})(\d{3})(\d{4})$/', $this->no_telepon,  $matches ) )
-        if(strlen($this->no_telepon > 10) && preg_match('/^(\d{4})(\d{4})(\d{3,})$/', $this->no_telepon,  $matches))
-        {
-            $result = $matches[1] . '-' .$matches[2] . '-' . $matches[3];
-            return $result;
-        } elseif (preg_match('/^(\d{3})(\d{3})(\d{4,})$/', $this->no_telepon,  $matches))
-        {
-            $result = $matches[1] . '-' .$matches[2] . '-' . $matches[3];
-            return $result;
-        }
+        return $this->hasMany(Alamat::class, 'pengguna_id', 'id');
+    }
+
+    public function telepons()
+    {
+        return $this->hasMany(Telepon::class, 'pengguna_id', 'id');
+    }
+
+    public function emails()
+    {
+        return $this->hasMany(Email::class, 'pengguna_id', 'id');
     }
 
     public function getNPWP()

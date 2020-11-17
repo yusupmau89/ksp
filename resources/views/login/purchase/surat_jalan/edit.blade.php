@@ -43,7 +43,6 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="no_surat_jalan">Nomor Surat Jalan</label>
-                                    <input type="hidden" name="no_po" value="{{$purchase->no_po}}">
                                     <input type="text" name="no_surat_jalan" value="{{old('no_surat_jalan', $sj->no_surat_jalan)}}" class="form-control" autofocus>
                                     @error('no_surat_jalan')
                                     <small class="text-danger">{{$message}}</small>
@@ -61,6 +60,34 @@
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
+                                <div class="form-inline  mb-2">
+                                    <div class="form-group">
+                                        <label for="kendaraan">Kendaraan</label>
+                                        <select class="form-control mx-2" name="kendaraan">
+                                            <option {{strtolower($sj->kendaraan)=='pick up' ? 'selected' : ''}}>Pick Up</option>
+                                            <option {{strtolower($sj->kendaraan)=='truk' ? 'selected' : ''}}>Truk</option>
+                                            <option {{strtolower($sj->kendaraan)=='motor' ? 'selected' : ''}}>Motor</option>
+                                            <option value="" {{empty($sj->kendaraan)? 'selected' : '' }}>Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plat_no">Plat Nomor Kendaraan</label>
+                                        <input type="text" name="plat_no" value="{{old('plat_no', $sj->plat_no)}}" class="form-control mx-2" placeholder="Plat Nomor Kendaraan">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plat_no">Pengendara</label>
+                                        <input type="text" name="pengirim" value="{{old('pengirim', $sj->pengirim)}}" class="form-control mx-2" placeholder="Pengendara">
+                                    </div>
+                                </div>
+                                @if ($errors->has('kendaraan')||$errors->has('plat_no')||$errors->has('pengirim'))
+                                <div class="form-group">
+                                    <small class="text-danger">
+                                    @error('kendaraan') {{$message.' '}} @enderror
+                                    @error('plat_no') {{$message.' '}} @enderror
+                                    @error('pengirim') {{$message}} @enderror
+                                    </small>
+                                </div>
+                                @endif
                                 <div class="form-group">
                                     <label for="signed_by">Penanda Tangan</label>
                                     <input type="text" name="signed_by" value="{{old('signed_by', $sj->signed_by)}}" class="form-control">
@@ -80,12 +107,11 @@
                                     <tbody>
                                         @foreach ($sj->lists as $list)
                                         <tr>
-                                            <input type="hidden" name="{{'list['.$loop->iteration.'][purchase_list]'}}" value="{{bcrypt($list->purchase_list)}}">
-                                            <input type="hidden" name="{{'list['.$loop->iteration.'][produk]'}}" value="{{bcrypt($list->produk)}}">
                                             <td class="text-center">{{$loop->iteration}}</td>
-                                            <td>{{$list->product->nama_produk}}</td>
-                                            <td><input name="{{'list['.$loop->iteration.'][jumlah]'}}" type="number" min="0" max="{{$list->purchaseList->sisa+$list->jumlah}}" step="0.01" value="{{old('list.'.$loop->iteration.'.jumlah', $list->jumlah)}}" class="form-control"></td>
-                                            <td><input name="{{'list['.$loop->iteration.'][retur]'}}" type="number" min="0" max="{{$list->jumlah}}" step="0.01" value="{{old('list.'.$loop->iteration.'.retur', $list->retur)}}" class="form-control"></td>
+                                            <td>{{$list->purchaseList->product->nama_produk}}</td>
+                                            <td><input name="{{'list['.$loop->iteration.'][jumlah]'}}" type="number" min="0" max="{{$list->purchaseList->sisa+$list->jumlah}}" step="0.01" value="{{old('list.'.$loop->iteration.'.jumlah', $list->jumlah/100)}}" class="form-control"></td>
+                                            <td><input name="{{'list['.$loop->iteration.'][retur]'}}" type="number" min="0" max="{{$list->jumlah}}" step="0.01" value="{{old('list.'.$loop->iteration.'.retur', $list->retur/100)}}" class="form-control"></td>
+                                            <input type="hidden" name="{{'list['.$loop->iteration.'][purchase_list]'}}" value="{{$list->purchase_list}}">
                                         </tr>
                                         @endforeach
                                     </tbody>

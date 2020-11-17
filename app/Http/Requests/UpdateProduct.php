@@ -27,6 +27,7 @@ class UpdateProduct extends FormRequest
         return [
             'kode_produk' => 'required|unique:products,kode_produk,'.$this->product->id,
             'nama_produk' => 'required|unique:products,nama_produk,'.$this->product->id,
+            'jenis_produk' => 'required',
             'kategori' => 'required',
             'satuan_unit' => 'required',
             'harga' => 'required|numeric|min:0|not_in:0',
@@ -41,7 +42,8 @@ class UpdateProduct extends FormRequest
             'kode_produk.unique' => 'Kode Produk sudah ada, silakan ganti',
             'nama_produk.required' => 'Nama Produk tidak boleh kosong',
             'nama_produk.unique' => 'Nama Produk sudah ada, silakan ganti',
-            'kategori.required' => 'Kategori tidak boleh kosong',
+            'jenis_produk.required' => 'Jenis Produk tidak boleh kosong',
+            'kategori.required' => 'Kategori Produk tidak boleh kosong',
             'satuan_unit.required' => 'Satuan unit tidak boleh kosong',
             'drawing.mimes' => 'File Drawing harusa bertipe png, jpeg, jpg, atau pdf',
             'harga.not_in' => 'Harga harus lebih dari 0',

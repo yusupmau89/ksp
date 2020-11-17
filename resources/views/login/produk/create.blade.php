@@ -46,19 +46,27 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <label>Kategori</label>
+                                    <label>Jenis Produk</label>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="kategori" value="Barang" checked>
+                                            <input type="radio" class="form-check-input" name="jenis_produk" value="Barang" checked>
                                             Barang
                                         </label>
                                     </div>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="kategori" value="Jasa">
+                                            <input type="radio" class="form-check-input" name="jenis_produk" value="Jasa">
                                             Jasa
                                         </label>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kategori">Kategori</label>
+                                    <select class="form-control" name="kategori">
+                                    @foreach ($kategori as $item)
+                                        <option value="{{$item->id}}" {{old('kategori')==$item->id?'selected':''}}>{{$item->kategori}}</option>
+                                    @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="satuan_unit">Satuan Unit</label>

@@ -33,7 +33,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="nama_customer">Nama Customer</label>
-                                    <input value="{{old('nama_customer', $customer->nama_customer)}}" type="text" name="nama_customer" id="nama_customer" class="form-control" autofocus>
+                                    <input value="{{old('nama_customer', $customer->nama)}}" type="text" name="nama_customer" id="nama_customer" class="form-control" autofocus>
                                     @error('nama_customer')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
@@ -66,28 +66,28 @@
                                 @enderror
                                 <div class="form-group mt-3">
                                     <label for="alamat_pengiriman">Alamat Pengiriman</label>
-                                    <textarea class="form-control" name="alamat_pengiriman" id="alamat_pengiriman" rows="3" style="resize: none;" placeholder="Silakan Isi Alamat Pengiriman">{{old('alamat_pengiriman', $customer->alamat_pengiriman)}}</textarea>
+                                    <textarea class="form-control" name="alamat_pengiriman" id="alamat_pengiriman" rows="3" style="resize: none;" placeholder="Silakan Isi Alamat Pengiriman">{{old('alamat_pengiriman', $customer->alamats()->where('ref_alamat_id', 1)->first()->nama_jalan)}}</textarea>
                                     @error('alamat_pengiriman')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
                                 <div class="form-group">
                                     <label for="alamat_penagihan">Alamat Penagihan</label>
-                                    <textarea style="resize: none;" class="form-control" name="alamat_penagihan" id="alamat_penagihan" rows="3">{{old('alamat_penagihan', $customer->alamat_penagihan)}}</textarea>
+                                    <textarea style="resize: none;" class="form-control" name="alamat_penagihan" id="alamat_penagihan" rows="3">{{old('alamat_penagihan', $customer->alamats()->where('ref_alamat_id', 2)->first()->nama_jalan)}}</textarea>
                                     @error('alamat_penagihan')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Alamat Email</label>
-                                    <input type="email" name="email" id="email" class="form-control" value="{{old('email', $customer->email)}}" placeholder="Silakan Isi Email">
+                                    <input type="email" name="email" id="email" class="form-control" value="{{old('email', $customer->emails()->count()==0?'':$customer->emails()->first()->email)}}" placeholder="Silakan Isi Email">
                                     @error('email')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
                                 <div class="form-group">
                                     <label for="no_telepon">Nomor Telepon</label>
-                                    <input type="text" name="no_telepon" id="no_telepon" class="form-control" value="{{old('no_telepon', $customer->no_telepon)}}" pattern="^[0-9]{10,17}$" placeholder="Silakan Isi No Telepon">
+                                    <input type="text" name="no_telepon" id="no_telepon" class="form-control" value="{{old('no_telepon', $customer->telepons()->count()==0?'':$customer->telepons()->first()->no_telepon)}}" pattern="^[0-9]{10,17}$" placeholder="Silakan Isi No Telepon">
                                     @error('no_telepon')
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror

@@ -26,7 +26,7 @@
                     <div class="card card-info card-outline">
                         <div class="card-header">
                             <h3 class="card-title">
-                                {{$customer->nama_customer}}
+                                {{$customer->nama}}
                             </h3>
                         </div>
                         <div class="card-body">
@@ -38,7 +38,7 @@
                                     <tr>
                                         <td>Nama Customer</td>
                                         <td>:</td>
-                                        <td>{{$customer->nama_customer}}</td>
+                                        <td>{{$customer->nama}}</td>
                                     </tr>
                                     <tr>
                                         <td>NPWP</td>
@@ -48,22 +48,22 @@
                                     <tr>
                                         <td>Alamat Pengiriman</td>
                                         <td>:</td>
-                                        <td>{{$customer->alamat_pengiriman}}</td>
+                                        <td>{{$customer->alamats()->where('ref_alamat_id', 1)->first()->nama_jalan}}</td>
                                     </tr>
                                     <tr>
                                         <td>Alamat Penagihan</td>
                                         <td>:</td>
-                                        <td>{{$customer->alamat_penagihan}}</td>
+                                        <td>{{$customer->alamats()->where('ref_alamat_id', 2)->first()->nama_jalan}}</td>
                                     </tr>
                                     <tr>
                                         <td>Alamat Email</td>
                                         <td>:</td>
-                                        <td>{{$customer->email}}</td>
+                                        <td>{{$customer->emails()->first()->email}}</td>
                                     </tr>
                                     <tr>
                                         <td>Nomor Telepon</td>
                                         <td>:</td>
-                                        <td>{{$customer->noTelp()}}</td>
+                                        <td>{{$customer->telepons()->first()->noTelp()}}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot>

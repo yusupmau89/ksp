@@ -17,10 +17,12 @@ class CreatePurchaseListsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('no_po');
             $table->unsignedBigInteger('produk');
-            $table->unsignedDouble('jumlah');
-            $table->unsignedDecimal('harga', 17, 2);
-            $table->unsignedDouble('terkirim');
-            $table->unsignedDouble('sisa');
+            $table->unsignedBigInteger('jumlah');
+            $table->unsignedBigInteger('harga');
+            $table->unsignedBigInteger('subtotal');
+            $table->unsignedBigInteger('diskon');
+            $table->unsignedBigInteger('terkirim');
+            $table->unsignedBigInteger('sisa');
             $table->timestamps();
         });
     }

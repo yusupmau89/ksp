@@ -15,11 +15,10 @@ class CreateSjListsTable extends Migration
     {
         Schema::create('sj_lists', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('surat_jalan');
+            $table->unsignedBigInteger('no_surat_jalan');
             $table->unsignedBigInteger('purchase_list');
-            $table->unsignedBigInteger('produk');
-            $table->unsignedDouble('jumlah');
-            $table->unsignedDouble('retur')->default(0);
+            $table->unsignedBigInteger('jumlah');
+            $table->unsignedBigInteger('retur')->default(0);
             $table->timestamps();
         });
     }

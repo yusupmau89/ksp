@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSuratJalan;
 use App\Http\Requests\UpdateSuratJalan;
-use App\Models\Product;
+use App\Models\Invoice;
 use App\Models\PurchaseOrder;
 use App\Models\SuratJalan;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,7 +22,7 @@ class SuratJalanController extends Controller
      */
     public function index(PurchaseOrder $purchase)
     {
-        $suratJalan = SuratJalan::where('no_po', $purchase->id)->orderBy('tanggal_surat_jalan', 'asc')->get();
+        $suratJalan = SuratJalan::where('nomor_po', $purchase->id)->orderBy('tanggal_surat_jalan', 'desc')->get();
         return view('login.purchase.surat_jalan.index', compact('suratJalan', 'purchase'));
     }
 
@@ -34,8 +33,11 @@ class SuratJalanController extends Controller
      */
     public function create(PurchaseOrder $purchase)
     {
+        $no = 1;
         $suratJalan = SuratJalan::whereYear('tanggal_surat_jalan', date("Y"))->get();
-        $no = $suratJalan->count()+1;
+
+        if ($suratJalan->count()>0)
+            $no += (int)substr($suratJalan->where('id',$suratJalan->max('id'))->first()->no_surat_jalan, 3,3);
         $nomor = 'SJ-'. str_pad($no, 3, '0', STR_PAD_LEFT).'/KSP/'.date('m').'/'.date('y');
 
         return view('login.purchase.surat_jalan.create', compact('nomor', 'purchase'));
@@ -49,13 +51,20 @@ class SuratJalanController extends Controller
      */
     public function store(StoreSuratJalan $request, PurchaseOrder $purchase)
     {
+        //dd($request->all());
+        if ($purchase->lists()->sum('sisa')==0)
+            return redirect('/purchase')->with('success', 'Gagal membuat Surat Jalan PO dengan nomor '.$purchase->no_po.' sudah terkirim semua');
+
         $validated = $request->validated();
-        //dd($validated, $purchase);
+        //dd($validated);
 
         $suratJalan = new SuratJalan;
         $suratJalan->no_surat_jalan = $validated['no_surat_jalan'];
-        $suratJalan->no_po = $purchase->id;
+        $suratJalan->nomor_po = $validated['no_po'];
         $suratJalan->tanggal_surat_jalan = Carbon::createFromFormat('d/m/Y', $validated['tanggal_surat_jalan']);
+        $suratJalan->kendaraan = $validated['kendaraan'];
+        $suratJalan->plat_no = $validated['plat_no'];
+        $suratJalan->pengirim = $validated['pengirim'];
         $suratJalan->signed_by = $validated['signed_by'];
         $suratJalan->created_by = Auth::user()->id;
         $suratJalan->slug = Str::slug($validated['no_surat_jalan']);
@@ -64,8 +73,11 @@ class SuratJalanController extends Controller
 
         foreach ($validated['list'] as $key=>$list)
         {
-            $sjList[$key]['jumlah'] = $list['jumlah'];
+            if ($list['jumlah']==0) {continue;}
+            $sjList[$key]['jumlah'] = $list['jumlah']*100;
             $sjList[$key]['retur'] = 0;
+            $sjList[$key]['purchase_list'] = $list['list'];
+            /*
             foreach ($purchase->lists as $data)
             {
                 if (Hash::check($data->id,$list['list']) && Hash::check($data->produk, $list['produk'])) {
@@ -74,6 +86,7 @@ class SuratJalanController extends Controller
                     break;
                 }
             }
+            */
             $purchaseList = $purchase->lists()->find($sjList[$key]['purchase_list']);
             $purchaseList->terkirim += $sjList[$key]['jumlah'];
             $purchaseList->sisa = $purchaseList->jumlah-$purchaseList->terkirim;
@@ -120,20 +133,28 @@ class SuratJalanController extends Controller
         $validated = $request->validated();
 
         $sj->no_surat_jalan = $validated['no_surat_jalan'];
+        $sj->kendaraan = $validated['kendaraan'];
+        $sj->plat_no = $validated['plat_no'];
+        $sj->pengirim = $validated['pengirim'];
         $sj->tanggal_surat_jalan = Carbon::createFromFormat('d/m/Y', $validated['tanggal_surat_jalan']);
         $sj->signed_by = $validated['signed_by'];
         $sj->save();
 
         foreach ($validated['list'] as $list) {
-            foreach ($purchase->lists as $cari) {
-                if (Hash::check($cari->id, $list['purchase_list'])) $purchaseList = $cari;
+            $sjList = $sj->lists()->where('no_surat_jalan', $sj->id)->where('purchase_list', $list['purchase_list'])->first();
+            $purchaseList = $sjList->purchaseList;
+            if ($list['jumlah']===0) {
+                $purchaseList->terkirim = $purchaseList->terkirim - $sjList->jumlah + $sjList->retur;
+                $purchaseList->sisa = $purchaseList->jumlah - $purchaseList->terkirim;
+                $purchaseList->save();
+                $sjList->delete();
+                continue;
             }
-            $sjList = $purchaseList->sjList;
-            $purchaseList->terkirim = $purchaseList->terkirim - $sjList->jumlah + $list['jumlah'] + $sjList->retur - $list['retur'];
+            $purchaseList->terkirim = $purchaseList->terkirim - $sjList->jumlah + ($list['jumlah']*100) + $sjList->retur - ($list['retur']*100);
             $purchaseList->sisa = $purchaseList->jumlah - $purchaseList->terkirim;
             $purchaseList->save();
-            $sjList->jumlah = $list['jumlah'];
-            $sjList->retur = $list['retur'];
+            $sjList->jumlah = $list['jumlah']*100;
+            $sjList->retur = $list['retur']*100;
             $sjList->save();
         }
 
@@ -148,6 +169,10 @@ class SuratJalanController extends Controller
      */
     public function destroy(PurchaseOrder $purchase, SuratJalan $sj)
     {
+        if ($purchase->status === 'Completed')
+            $purchase->status = 'Partially Invoiced';
+        $purchase->save();
+
         foreach ($sj->lists as $list) {
             $purchaseList = $purchase->lists()->find($list->purchase_list);
             $purchaseList->terkirim -= $list->jumlah;

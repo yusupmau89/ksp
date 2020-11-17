@@ -15,11 +15,15 @@ class CreatePurchaseOrdersTable extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('no_po')->unique();
+            $table->string('nomor_po')->unique();
             $table->date('tanggal_po');
             $table->date('tanggal_kirim');
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedDecimal('down_payment', 17,2);
+            $table->string('top');
+            $table->unsignedBigInteger('ppn');
+            $table->unsignedBigInteger('diskon');
+            $table->unsignedBigInteger('grand_total');
+            $table->enum('status',['On Progress', 'Partially Delivered', 'Partially Invoiced', 'Completed']);
             $table->unsignedBigInteger('created_by');
             $table->string('slug');
             $table->timestamps();

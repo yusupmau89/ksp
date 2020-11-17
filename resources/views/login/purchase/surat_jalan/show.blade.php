@@ -7,6 +7,8 @@
     <style>
         @page{
             margin-top: 4cm;
+            margin-bottom: 2.5cm;
+            size: 9.5in 11in;
         }
         body{
             display: block;
@@ -23,6 +25,7 @@
             font-family: Arial, Helvetica, sans-serif;
             border-bottom: 5px double black;
             margin-bottom: 1rem;
+            width: 100%;
         }
         td.image-logo{
             height: 2cm;
@@ -77,12 +80,17 @@
         }
         .footer{
             page-break-inside: avoid;
-            margin-top: 1 cm;
+            position: fixed;
+            bottom: 2.5cm;
+            left: 1cm;
+            right: -1cm;
+            margin: 0;
         }
         .header{
             position: fixed;
             top: -3.5cm;
-            left: 0.5cm;
+            left: 1cm;
+            right: 1cm;
             height: 3cm;
         }
         .body{
@@ -141,7 +149,7 @@
             <tr>
                 <td>Nomor PO</td>
                 <td>:</td>
-                <td>{{$sj->purchase->no_po}}</td>
+                <td>{{$sj->purchase->nomor_po}}</td>
             </tr>
             <tr>
                 <td>Tanggal PO</td>
@@ -153,8 +161,8 @@
     <div class="col">
         <table class="address pad">
             <tr><td>Kepada Yth.</td></tr>
-            <tr><td>{{$sj->purchase->customer->nama_customer}}</td></tr>
-            <tr><td>{{$sj->purchase->customer->alamat_pengiriman}}</td></tr>
+            <tr><td>{{$sj->purchase->customer->nama}}</td></tr>
+            <tr><td>{{$sj->purchase->customer->alamats()->where('ref_alamat_id',1)->first()->nama_jalan}}</td></tr>
         </table>
     </div>
     <table class="surat">
@@ -167,12 +175,12 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($sj->lists as $data)
+            @foreach ($sj->lists as $item)
             <tr>
                 <td class="center">{{$loop->iteration}}</td>
-                <td>{{$data->product->kode_produk}}</td>
-                <td>{{$data->product->nama_produk}}</td>
-                <td>{{$data->jumlah}} {{$data->product->satuan_unit}}</td>
+                <td>{{$item->purchaseList->product->kode_produk}}</td>
+                <td>{{$item->purchaseList->product->nama_produk}}</td>
+                <td class="center">{{$item->jumlah/100}} {{$item->purchaseList->product->satuan_unit}}</td>
             </tr>
             @endforeach
         </tbody>
@@ -187,7 +195,7 @@
             <tr><td class="kosong">&nbsp;</td><td class="kosong">&nbsp;</td></tr>
             <tr>
                 <td>(______________________)</td>
-                <td>{{$sj->signed_by}}</td>
+                <td>( {{$sj->signed_by}} )</td>
             </tr>
             </tbody>
         </table>

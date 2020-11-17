@@ -14,8 +14,10 @@ class Product extends Model
         'kode_produk',
         'nama_produk',
         'kategori',
-        'unit',
+        'jenis_produk',
+        'satuan_unit',
         'harga',
+        'drawing',
         'created_by',
         'slug',
     ];
@@ -40,5 +42,10 @@ class Product extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori', 'id');
     }
 }

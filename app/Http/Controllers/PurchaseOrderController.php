@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreListPo;
-use App\Models\Customer;
+use App\Models\Pengguna as Customer;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Carbon\Carbon;
@@ -31,7 +31,7 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        $customers = Customer::orderBy('nama_customer', 'asc')->get();
+        $customers = Customer::orderBy('nama', 'asc')->get();
         $products = Product::orderBy('nama_produk', 'asc')->get();
         return view('login.purchase.create', compact('customers', 'products'));
     }
@@ -47,28 +47,39 @@ class PurchaseOrderController extends Controller
         $validated = $request->validated();
         $po = new PurchaseOrder;
 
-        $po->no_po = $validated['no_po'];
+        $po->nomor_po = $validated['no_po'];
         $po->customer_id = $validated['customer'];
         $po->tanggal_po = Carbon::createFromFormat('d/m/Y',$validated['tanggal_po'])->format('Y/m/d');
         $po->tanggal_kirim = Carbon::createFromFormat('d/m/Y',$validated['tanggal_kirim'])->format('Y/m/d');
         $po->top = $validated['top'];
-        $po->down_payment = $validated['down_payment'];
+        $po->ppn = 0;
+        $po->diskon = 0;
+        $po->grand_total = 0;
         $po->created_by = Auth::user()->id;
-        $po->ppn = $validated['ppn'];
         $po->status = 'On Progress';
         $po->slug = Str::slug($validated['no_po']);
 
         $po->save();
+        $grandTotal = 0;
+        $diskon = 0;
 
         foreach ($validated['product'] as $product) {
+            $grandTotal += ($product['harga']*$product['jumlah'])-$product['diskon'];
+            $diskon += $product['diskon'];
             $po->lists()->create([
                 'produk' => $product['produk'],
-                'jumlah' => $product['jumlah'],
-                'harga' => $product['harga'],
+                'jumlah' => $product['jumlah']*100,
+                'harga' => $product['harga']*100,
+                'subtotal' => (($product['harga']*$product['jumlah'])-$product['diskon'])*100,
+                'diskon' => $product['diskon']*100,
                 'terkirim' => 0,
-                'sisa' => $product['jumlah'],
+                'sisa' => $product['jumlah']*100,
             ]);
         }
+
+        strtolower($validated['ppn'])==='ya' ? $po->ppn = floor($grandTotal*0.1)*100 : $po->ppn=0;
+
+        $po->grand_total = $grandTotal*100; $po->diskon = $diskon*100; $po->save();
 
         return redirect('purchase')->with('success', 'PO berhasil ditambah');
     }
@@ -81,7 +92,7 @@ class PurchaseOrderController extends Controller
      */
     public function show(PurchaseOrder $purchase)
     {
-        //
+        return view('login.purchase.show', compact('purchase'));
     }
 
     /**
@@ -118,10 +129,12 @@ class PurchaseOrderController extends Controller
         foreach ($purchase->lists as $item) {
             $item->delete();
         }
-        foreach ($purchase->pengiriman as $item) {
+        foreach ($purchase->suratJalan as $item) {
             $item->delete();
         }
-        $purchase->statusPo->delete();
+        foreach ($purchase->invoices as $item) {
+            $item->delete();
+        }
         $purchase->delete();
 
         return redirect('/purchase')->with('success', 'PO berhasil dihapus');

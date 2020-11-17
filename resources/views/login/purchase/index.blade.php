@@ -56,14 +56,14 @@
                                     <tr>
                                         <td>
                                             <a href="{{route('purchase.show', $purchase)}}">
-                                                {{$purchase->no_po}}
+                                                {{$purchase->nomor_po}}
                                             </a>
                                         </td>
                                         <td>{{$purchase->tanggal_kirim}}</td>
                                         <td>{{$purchase->status}}</td>
                                         <td>
                                             <a href="{{route('sj.index', $purchase)}}" data-toggle="tooltip" title="Surat Jalan" class="btn btn-success btn-sm"><i class="fas fa-truck-pickup"></i></a>
-                                            <a href="#" data-toggle="tooltip" title="Invoice" class="btn btn-sm btn-primary"><i class="fas fa-file-invoice"></i></a>
+                                            <a href="{{route('invoice.index', $purchase)}}" data-toggle="tooltip" title="Invoice" class="btn btn-sm btn-primary"><i class="fas fa-file-invoice"></i></a>
                                             <a href="{{route('purchase.edit', $purchase)}}" data-toggle="tooltip" title="Ubah" class="btn btn-sm btn-warning">
                                                 <i class="far fa-edit"></i>
                                             </a>
@@ -71,7 +71,7 @@
                                                 <i data-toggle="tooltip" title="hapus" class="fa fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </td>
-                                        <td style="display: none;">{{$purchase->customer->nama_customer}}</td>
+                                        <td style="display: none;">{{$purchase->customer->nama}}</td>
                                         <div class="modal fade" id="hapus-{{$purchase->slug}}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">

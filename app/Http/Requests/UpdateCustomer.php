@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Email;
+use App\Models\Telepon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,11 +28,11 @@ class UpdateCustomer extends FormRequest
     {
         return [
             'nama_customer' => 'required',
-            'npwp' => 'sometimes|unique:customers,npwp,'.$this->customer->id,
+            'npwp' => 'sometimes|unique:pengguna,npwp,'.$this->customer->id,
             'alamat_pengiriman' => 'required',
             'alamat_penagihan' => 'sometimes',
-            'email' => 'nullable|email|unique:customers,email,'.$this->customer->id,
-            'no_telepon' => 'sometimes|unique:customers,no_telepon,'.$this->customer->id,
+            'email' => 'nullable|email|unique:emails,email,'.Email::where('pengguna_id',$this->customer->id)->count()==0?'':Email::where('pengguna_id',$this->customer->id)->first()->id ,
+            'no_telepon' => 'sometimes|unique:telepon,no_telepon,'.Telepon::where('pengguna_id',$this->customer->id)->count()==0?'':Telepon::where('pengguna_id', $this->customer->id)->first()->id,
         ];
     }
 
@@ -49,9 +51,9 @@ class UpdateCustomer extends FormRequest
     {
         $this->merge([
             'nama_customer' => strtoupper($this->nama_customer),
-            'alamat_pengiriman' => strtoupper($this->alamat_pengiriman),
-            'alamat_penagihan' => strtoupper($this->alamat_penagihan),
             'npwp' => implode('',$this->npwp),
+            'alamat_pengiriman' => ucwords(strtolower($this->alamat_pengiriman)),
+            'alamat_penagihan' => ucwords(strtolower($this->alamat_penagihan)),
         ]);
     }
 }

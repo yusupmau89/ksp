@@ -17,9 +17,11 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('kode_produk')->unique();
             $table->string('nama_produk')->unique();
-            $table->enum('kategori', ['Barang', 'Jasa']);
+            $table->enum('jenis_produk', ['Barang', 'Jasa']);
+            $table->unsignedBigInteger('kategori'); //contoh: komponen, panel, extension (untuk jenis barang); pengadaan, repair, pembuatan (untuk jenis jasa)
             $table->string('satuan_unit');
-            $table->unsignedDecimal('harga', 17, 2);
+            $table->unsignedBigInteger('harga');
+            $table->string('drawing')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->string('slug');
             $table->timestamps();

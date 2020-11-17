@@ -44,7 +44,7 @@
                                     <label for="customer">Customer</label>
                                     <select class="form-control select2bs4" name="customer" id="customer" style="width: 100%;">
                                         @foreach ($customers as $customer)
-                                        <option value="{{$customer->id}}" @if(old('customer') == $customer->id) selected @endif>{{$customer->nama_customer}}</option>
+                                        <option value="{{$customer->id}}" @if(old('customer') == $customer->id) selected @endif>{{$customer->nama}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -86,13 +86,6 @@
                                     <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
-                                <div class="form-group">
-                                    <label for="down_payment">Down Payment(dp)</label>
-                                    <input type="number" name="down_payment" id="down_payment" class="form-control" min="0" step="0.01" value="{{old('harga', 0)}}">
-                                    @error('down_payment')
-                                    <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
                                 <div class="form-inline mb-3">
                                     <div class="form-group">
                                         <label class="mr-2">PPN 10%</label>
@@ -131,6 +124,7 @@
                                             <th>Jumlah</th>
                                             <th>Harga</th>
                                             <th>Subtotal</th>
+                                            <th>Diskon</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -138,6 +132,7 @@
                                     <tfoot>
                                         <tr>
                                             <td colspan="4" id="total" class="text-right font-weight-bold"></td>
+                                            <td id="tdiskon" class="font-weight-bold"></td>
                                             <td></td>
                                         </tr>
                                         @error('product')
@@ -220,6 +215,7 @@ function tambahProduk() {
             '<td style="width: 100px;"><input class="form-control" value="1" id="jumlah'+x+'" onchange="subnTotal(this)" type="number" min="0" step="0.01" name="product['+x+'][jumlah]"></td>'+
             '<td style="width: 150px;"><input class="form-control" id="harga'+x+'" onchange="subnTotal(this)" type="number" min="0" step="0.01" name="product['+x+'][harga]" value="'+produk.harga+'"></td>'+
             '<td id="subtotal'+x+'" class="text-right">'+(produk.harga)+'</td>'+
+            '<td><input type="number" min="0" step="0.01" value="0" onchange="totalDiskon(this)" name="product['+x+'][diskon]"></td>'+
             '<td><button type="button" class="btn btn-sm btn-danger" onclick="hapus(this)"><i class="fa fa-trash" aria-hidden="true"></i></button></td>'+
         '</tr>'
     );
@@ -252,6 +248,7 @@ function hapus(data) {
 function subnTotal(data) {
     subtotal(data);
     getTotal(data);
+    totalDiskon(data);
 }
 
 function getTotal(data) {
@@ -269,6 +266,20 @@ function getTotal(data) {
 
     var eltotal = document.getElementById('total');
     eltotal.innerHTML = "Rp. " + total.toLocaleString('id-ID');
+}
+
+function totalDiskon(data) {
+    var tparent = data.parentElement.parentElement.parentElement;
+    var datachild = tparent.children;
+    var nchild = datachild.length;
+    var total = 0;
+
+    for (var i=0;i<nchild;i++) {
+        total+= parseFloat(datachild[i].children[4].children[0].value);
+    }
+
+    var eldiskon = document.getElementById("tdiskon");
+    eldiskon.innerHTML = "Rp. " + total.toLocaleString('id-ID');
 }
 </script>
 @endsection

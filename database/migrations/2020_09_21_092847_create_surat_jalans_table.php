@@ -17,7 +17,11 @@ class CreateSuratJalansTable extends Migration
             $table->id();
             $table->string('no_surat_jalan')->unique();
             $table->date('tanggal_surat_jalan');
-            $table->unsignedBigInteger('no_po');
+            $table->unsignedBigInteger('nomor_po');
+            $table->unsignedBigInteger('nomor_invoice')->nullable();
+            $table->string('kendaraan')->nullable();
+            $table->string('plat_no')->nullable();
+            $table->string('pengirim')->nullable();
             $table->string('signed_by');
             $table->unsignedBigInteger('created_by');
             $table->string('slug');

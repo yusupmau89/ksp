@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomersTable extends Migration
+class CreatePenggunaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateCustomersTable extends Migration
      */
     public function up()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('pengguna', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_customer');
+            $table->string('nama');
             $table->string('npwp', 20)->nullable()->unique();
-            $table->text('alamat_pengiriman');
-            $table->text('alamat_penagihan');
-            $table->string('email')->unique()->nullable();
-            $table->string('no_telepon', 17)->unique()->nullable();
+            $table->boolean('perusahaan')->default(false);
+            $table->boolean('supplier')->default(false);
+            $table->boolean('customer')->default(false);
+            $table->boolean('pegawai')->default(false);
             $table->unsignedBigInteger('created_by');
             $table->string('slug')->unique();
             $table->timestamps();
